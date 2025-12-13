@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lazaro</title>
+    <meta name="description" content="Página inicial para un portal que reúne información sobre otras páginas (AR: "
+        about/referencias")." />
+    <style>
+        :root {
+            --bg: #f6f8fa;
+            --card: #ffffff;
+            --accent: #0b74de;
+            --muted: #6b7280
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Inter, system-ui, Segoe UI, Arial, sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: #000000
+        }
+
+        header {
+            background: linear-gradient(90deg, #0b74de22, #0b74de11);
+            padding: 24px
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 28px auto;
+            padding: 0 16px
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: clamp(1.25rem, 2.2vw, 1.75rem)
+        }
+
+        p.lead {
+            color: var(--muted);
+            margin: 0 0 18px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px
+        }
+
+        .card {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04)
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 1.05rem
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: .9rem;
+            margin-bottom: 12px
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        button,
+        a.btn {
+            appearance: none;
+            border: 0;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600
+        }
+
+        a.btn.secondary {
+            background: #e6eefb;
+            color: var(--accent);
+            border: 1px solid #d7e9ff
+        }
+
+        footer {
+            color: var(--muted);
+            text-align: center;
+            padding: 26px 0;
+            font-size: .9rem
+        }
+
+        /* accesibilidad */
+        button:focus,
+        a.btn:focus {
+            outline: 3px solid #bde0ff;
+            outline-offset: 3px
+        }
+
+        @media (max-width:520px) {
+            .actions {
+                justify-content: flex-start
+            }
+        }
+
+        /* Fondo animado: estrellas fugaces */
+        .night {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top, #1b2735 0%, #090a0f 100%);
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shooting_star {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(-45deg, #fff, rgba(255, 255, 255, 0));
+            border-radius: 100%;
+            animation: tail 1.2s linear infinite, falling 1.2s linear infinite;
+        }
+
+        @keyframes tail {
+            0% {
+                height: 0;
+            }
+
+            30% {
+                height: 100px;
+            }
+
+            100% {
+                height: 0;
+            }
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(300px) translateY(300px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .shooting_star:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shooting_star:nth-child(2) {
+            top: 40%;
+            left: 30%;
+            animation-delay: 0.3s;
+        }
+
+        .shooting_star:nth-child(3) {
+            top: 10%;
+            left: 70%;
+            animation-delay: 0.5s;
+        }
+
+        .shooting_star:nth-child(4) {
+            top: 50%;
+            left: 80%;
+            animation-delay: 0.7s;
+        }
+
+        .shooting_star:nth-child(5) {
+            top: 60%;
+            left: 15%;
+            animation-delay: 1s;
+        }
+
+        .shooting_star:nth-child(6) {
+            top: 75%;
+            left: 50%;
+            animation-delay: 1.3s;
+        }
+
+        .shooting_star:nth-child(7) {
+            top: 30%;
+            left: 90%;
+            animation-delay: 1.6s;
+        }
+
+
+        .top-bar {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .top-bar-content {
+            max-width: 1200px;
+            margin: auto;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .top-bar-content span {
+            color: #bbb;
+        }
+
+        .top-bar nav a {
+            color: #ddd;
+            margin-left: 16px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .top-bar nav a:hover {
+            color: #fff;
+        }
+
+        /* Adaptación móvil */
+        @media (max-width: 520px) {
+            .top-bar-content {
+                flex-direction: column;
+                gap: 6px;
+                text-align: center;
+            }
+
+            .top-bar nav a {
+                margin-left: 8px;
+                margin-right: 8px;
+            }
+
+            header {
+                margin-top: 32px;
+            }
+
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.89);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #dadada;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 12px;
+        }
+
+        .modal-content button {
+            margin-top: 16px;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <span>Herramientas Web & Recursos</span>
+            <nav>
+                <a href="#" onclick="abrirModal('contacto')">Contacto</a>
+                <a href="#" onclick="abrirModal('sugerencias')">Sugerencias</a>
+                <a href="#" onclick="abrirModal('acerca')">Acerca de</a>
+            </nav>
+
+        </div>
+    </div>
+
+
+
+    <div class="night">
+        <!-- Número de estrellas fugaces (puedes agregar más si quieres) -->
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+    </div>
+
+
+    <header>
+        <div class="container">
+            <h1>
+                <center>Black List</center>
+            </h1>
+            <p class="lead">Aquí puedes explorar las páginas con la mejor asistencia y ayuda
+                recuerda no compartir esta informacion con alguien que no confias.</p>
+        </div>
+    </header>
+
+    <main class="container" id="main">
+        <section aria-labelledby="lista-title">
+            <h2 id="lista-title">Páginas registradas</h2>
+
+            <input type="text" id="searchInput" placeholder="Buscar por título, descripción o tags..." style="
+        width:100%;
+        padding:10px;
+        margin:12px 0 20px 0;
+        font-size:1rem;
+        border-radius:8px;
+        border:1px solid #ccc;
+    ">
+
+
+
+
+            <div class="grid" id="cards"></div>
+        </section>
+
+        <section aria-labelledby="manual-title" style="margin-top:18px">
+            <h2 id="manual-title">Cómo usar</h2>
+
+
+
+            <div class="card">
+                <ol>
+                    <li>Haz clic en <strong>Ver ficha</strong> para abrir una pestaña nueva con la información sobre la
+                        página.</li>
+                    <li>Haz clic en <strong>Abrir página</strong> para ir a la URL real en otra pestaña.</li>
+                    <li>Nuevas Herramientas y programas cada dia.</li>
+                </ol>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Las mejores IA y herramientas para ti.
+    </footer>
+
+    <script>
+        // Lista de páginas (ejemplos). Reemplaza o amplía con tus propias entradas.
+        const pages = [
+            {
+                id: 'You',
+                title: 'YOU',
+                url: 'https://you.com/',
+                description: 'Similar a Perplexity pero con un diseño mas moderno y con mas funcionalidades sin importar el tema.',
+                tags: ['Enciclopedia', 'Referencia', 'Colaborativo']
+            },
+            {
+                id: 'Adobe Podcast',
+                title: 'Adobe Podcast',
+                url: 'https://podcast.adobe.com/en/enhance?ref=aitoptools',
+                description: 'Ideal si tienes que grabar un video explicativo referente a un tema esta pagina te permite subir el audio de tu video y eliminar el ruido de fondo y mejorar las pronunciaciones ideal si vives en una colonia ruidosa.',
+                tags: ['Web', 'Audio', 'Video']
+            },
+            {
+                id: 'Chat Gpt',
+                title: 'Chat Gpt',
+                url: 'https://chat.openai.com/',
+                description: 'Que puedo decir es una inteligencia artificial que puede ayudarte con tus tareas diarias.',
+                tags: ['Web', 'IA', 'Chat']
+            },
+            {
+                id: 'Gamma Ia',
+                title: 'Gamma Ia',
+                url: 'https://gamma-ia.com/',
+                description: 'Que puedo decir es una inteligencia artificial que puede ayudarte con tus presentaciones, desarrolo de paginas web y documentos enfocada mas al desarrolo artistico por si quieres que tu trabajo se vea bien visualmente lastimosamente tienes pruebas limitadas pero si te registras con otros correos practicamente no tienes limitaciones.',
+                tags: ['Web', 'IA', 'Chat']
+            },
+            {
+                id: 'Correo Temporal',
+                title: 'Correo Temporal',
+                url: 'https://tucorreotemporal.org/es',
+                description: 'Una pagina ideal para obtener un correo temporal para que puedas recibir correos electrónicos o registrarse en sitios web.',
+                tags: ['Registros', 'Correo', 'Temporal']
+            },
+            {
+                id: 'Chat Edu',
+                title: 'Chat Edu',
+                url: 'https://chatedu.io/es/onboarding',
+                description: 'Similar a chatgpt pero con la diferencia que este funciona a base de apuntes, pdf y notas excelente si quieres resultados en base a la propia informacion que tienes y no externa .',
+                tags: ['Web', 'Chat', 'IA']
+            },
+            {
+                id: 'Kawsing',
+                title: 'Kawsing',
+                url: 'https://kawsing.github.io/ztype/',
+                description: 'Eres lento escribiendo con teclado y quieres aprender a reaccionar y escribir mas rapido juega Kawsing para mejorar tus habilidades.',
+                tags: ['Web', 'Juegos', 'Github']
+            },
+            {
+                id: 'Napking',
+                title: 'Napking',
+                url: 'https://www.napkin.ai/',
+                description: 'Covierte tu texto a imagenes.',
+                tags: ['Web', 'Chat', 'IA']
+            },
+            {
+                id: 'MGX',
+                title: 'MGX',
+                url: 'https://mgx.dev',
+                description: 'El chat Gpt de Meta.',
+                tags: ['Web', 'Chat', 'IA']
+            },
+            {
+                id: 'Learn Anything',
+                title: 'Learn Anything',
+                url: 'https://learn-anything.xyz/?ref=producthunt',
+                description: 'Aqui aprenderas a hacer cualquier cosa basicamente un manual de todo en la vida.',
+                tags: ['Web', 'Chat', 'Enciclopedia']
+            },
+            {
+                id: 'Recraft',
+                title: 'Recraft',
+                url: 'https://recraft.app/',
+                description: 'Si tienes una imagen en mala calidad, pixeleada, etc y quieres mejorarla esta pagina es ideal solo recuerda ir al apartado de vectorizar.',
+                tags: ['Imagen', 'Chat', 'IA']
+            },
+            {
+                id: 'SlowRoads',
+                title: 'SlowRoads',
+                url: 'https://slowroads.io/',
+                description: 'Estas aburrido quieres divertirte y te gustan los simuladores y los autos bueno esta pagina es ideal para ti es un simulador de manejo con tiempo atmosferico editable y puedes personalizarlo.',
+                tags: ['Juegos', 'Steam', 'Github']
+            },
+            {
+                id: 'Hex',
+                title: 'Hex',
+                url: 'https://hex.frvr.com/',
+                description: 'Estas aburrido quieres divertirte y te gusta tetris bueno esta pagina es ideal para ti.',
+                tags: ['Juegos', 'Steam', 'Github']
+            },
+            {
+                id: 'NZP',
+                title: 'NZP',
+                url: 'https://nzp.gay/',
+                description: 'Que puedo decir simplemente Call of duty Zombies.',
+                tags: ['Juegos', 'Steam', 'Github']
+            },
+            {
+                id: 'Github Copilot',
+                title: 'Github Copilot',
+                url: 'https://github.com/copilot',
+                description: 'Github Copilot es un asistente de IA que puede ayudarte a escribir codigo a si de facil.',
+                tags: ['IA', 'Chat', 'Github']
+            },
+        ]
+
+        // Renderiza las tarjetas en la página
+        const cardsEl = document.getElementById('cards');
+        pages.forEach(p => {
+            const card = document.createElement('article');
+            card.className = 'card';
+            card.innerHTML = `
+        <h3>${escapeHtml(p.title)}</h3>
+        <div class="meta">${escapeHtml(p.tags.join(' • '))}</div>
+        <p>${escapeHtml(p.description)}</p>
+        <div class="actions">
+          <button aria-label="Ver ficha de ${escapeHtml(p.title)}" onclick="openFicha('${p.id}')">Ver ficha</button>
+          <a class="btn secondary" href="${encodeURI(p.url)}" target="_blank" rel="noopener noreferrer">Abrir página</a>
+        </div>
+      `;
+            cardsEl.appendChild(card);
+        });
+
+        // Seguridad básica: escapar texto para evitar XSS
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Abre una nueva pestaña y escribe una ficha con la información de la página
+        function openFicha(id) {
+            const page = pages.find(p => p.id === id);
+            if (!page) return alert('Página no encontrada');
+
+            // Crea una nueva ventana/pestaña
+            const w = window.open('', '_blank');
+            if (!w) return alert('El navegador bloqueó la apertura de la pestaña. Permite ventanas emergentes.');
+
+            // Escribe contenido básico en la nueva pestaña (puedes mejorar el HTML según prefieras)
+            const html = `
+        <!doctype html>
+        <html lang="es">
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+          <title>Ficha — ${escapeHtml(page.title)}</title>
+          <style>body{font-family:system-ui,Arial;max-width:820px;margin:28px;padding:18px;background:#fbfdff;color:#0b1730}h1{margin-top:0}a{color:#0b74de}pre{background:#f3f7ff;padding:12px;border-radius:8px}</style>
+        </head>
+        <body>
+          <h1>${escapeHtml(page.title)}</h1>
+          <p><strong>Descripción:</strong> ${escapeHtml(page.description)}</p>
+          <p><strong>Etiquetas:</strong> ${escapeHtml(page.tags.join(', '))}</p>
+          <p><a href="${encodeURI(page.url)}" target="_blank" rel="noopener noreferrer">Abrir la página original</a></p>
+          <hr>
+          <p>Ficha generada el ${new Date().toLocaleString()}</p>
+        </body>
+        </html>
+      `;
+
+            // Escribir y reemplazar el documento de la nueva pestaña
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+        }
+
+        // ------------------------------
+        // Buscador en tiempo real
+        // ------------------------------
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', () => {
+            const term = searchInput.value.toLowerCase().trim();
+            cardsEl.innerHTML = "";
+
+            const filtered = pages.filter(p =>
+                p.title.toLowerCase().includes(term) ||
+                p.description.toLowerCase().includes(term) ||
+                p.tags.join(" ").toLowerCase().includes(term)
+            );
+
+            filtered.forEach(p => {
+                const card = document.createElement('article');
+                card.className = 'card';
+                card.innerHTML = `
+            <h3>${escapeHtml(p.title)}</h3>
+            <div class="meta">${escapeHtml(p.tags.join(' • '))}</div>
+            <p>${escapeHtml(p.description)}</p>
+            <div class="actions">
+                <button aria-label="Ver ficha de ${escapeHtml(p.title)}" onclick="openFicha('${p.id}')">Ver ficha</button>
+                <a class="btn secondary" href="${encodeURI(p.url)}" target="_blank" rel="noopener noreferrer">Abrir página</a>
+            </div>
+        `;
+                cardsEl.appendChild(card);
+            });
+
+            if (filtered.length === 0) {
+                cardsEl.innerHTML = "<p>No se encontraron resultados.</p>";
+            }
+        });
+
+    </script>
+
+    <!-- Fichero: Contacto -->
+    <div class="modal" id="contacto">
+        <div class="modal-content">
+            <h2>Contacto</h2>
+            <p>ghost120904@gmail.com</p>
+            <button onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Fichero: Sugerencias -->
+    <div class="modal" id="sugerencias">
+        <div class="modal-content">
+            <h2>Sugerencias</h2>
+            <p>Aquí podrás añadir un formulario o texto para sugerencias.</p>
+            <button onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Fichero: Acerca de -->
+    <div class="modal" id="acerca">
+        <div class="modal-content">
+            <h2>Acerca de</h2>
+            <p>Esta página web es un proyecto personal creado por MalabRusH con el fin de recavar herramientas utiles
+                para el aprendizaje personal no me hago cargo de nada que pueda suceder con esta página web.</p>
+            <button onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+
+
+    <script>
+        function abrirModal(id) {
+            document.getElementById(id).style.display = "flex";
+        }
+
+        function cerrarModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = "none";
+            });
+        }
+    </script>
+
+
+
+</body>
+
+</html>
